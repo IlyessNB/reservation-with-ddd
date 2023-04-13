@@ -2,18 +2,20 @@ package infrastructure.repository;
 
 import model.etablissement.Etablissement;
 import model.etablissement.EtablissementNonTrouveException;
+import model.repositories.EtablissementRepository;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class EtablissementRepository {
+public class InMemoryEtablissementRepository implements EtablissementRepository {
     List<Etablissement> etablissements;
 
-    public EtablissementRepository() {
+    public InMemoryEtablissementRepository() {
         this.etablissements = new ArrayList<>();
     }
 
+    @Override
     public Etablissement findById(String id) throws EtablissementNonTrouveException {
         Etablissement etablissementFound = etablissements.stream().filter(etablissement -> etablissement.getId().equals(id)).collect(Collectors.toList()).get(0);
 
@@ -24,6 +26,7 @@ public class EtablissementRepository {
         }
     }
 
+    @Override
     public void add(Etablissement etablissement) {
         etablissements.add(etablissement);
     }

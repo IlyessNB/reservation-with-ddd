@@ -1,9 +1,9 @@
 package use_case.etablissement;
 
-import infrastructure.repository.EtablissementRepository;
-import infrastructure.repository.ReservationRepository;
-import infrastructure.repository.RessourceRepository;
-import infrastructure.repository.UtilisateurRepository;
+import infrastructure.repository.InMemoryEtablissementRepository;
+import infrastructure.repository.InMemoryReservationRepository;
+import infrastructure.repository.InMemoryRessourceRepository;
+import infrastructure.repository.InMemoryUtilisateurRepository;
 import model.etablissement.Etablissement;
 import model.etablissement.Horaires;
 import model.etablissement.ressource.Ressource;
@@ -26,21 +26,21 @@ class ReservationsTest {
 
     // BeforeAll
     static ReserverRessource reserverRessource;
-    static UtilisateurRepository utilisateurRepository;
-    static ReservationRepository reservationRepository;
-    static EtablissementRepository etablissementRepository;
-    static RessourceRepository ressourceRepository;
+    static InMemoryUtilisateurRepository inMemoryUtilisateurRepository;
+    static InMemoryReservationRepository inMemoryReservationRepository;
+    static InMemoryEtablissementRepository inMemoryEtablissementRepository;
+    static InMemoryRessourceRepository inMemoryRessourceRepository;
 
     @BeforeAll
     static void beforeAll() {
-        utilisateurRepository = new UtilisateurRepository();
-        reservationRepository = new ReservationRepository();
-        ressourceRepository = new RessourceRepository();
-        etablissementRepository = new EtablissementRepository();
+        inMemoryUtilisateurRepository = new InMemoryUtilisateurRepository();
+        inMemoryReservationRepository = new InMemoryReservationRepository();
+        inMemoryRessourceRepository = new InMemoryRessourceRepository();
+        inMemoryEtablissementRepository = new InMemoryEtablissementRepository();
         reserverRessource = new ReserverRessource(
-                utilisateurRepository,
-                reservationRepository,
-                ressourceRepository
+                inMemoryUtilisateurRepository,
+                inMemoryReservationRepository,
+                inMemoryRessourceRepository
         );
     }
 
@@ -48,10 +48,10 @@ class ReservationsTest {
     void test_faire_une_reservation_avec_succes() {
         // Given
         Utilisateur utilisateur = new Utilisateur("1", "DOE", "John", "jdoe@gmail.com");
-        utilisateurRepository.create(utilisateur);
+        inMemoryUtilisateurRepository.create(utilisateur);
 
         Etablissement etablissement = new Etablissement("1", "Etablissement de test", "1 rue de test, 75000 Paris");
-        etablissementRepository.add(etablissement);
+        inMemoryEtablissementRepository.add(etablissement);
 
         Map<DayOfWeek, List<Horaires>> horaires = new HashMap<>();
         horaires.put(DayOfWeek.MONDAY, new ArrayList<>(){{add(new Horaires(LocalTime.of(8, 0), LocalTime.of(20, 0)));}});
@@ -63,7 +63,7 @@ class ReservationsTest {
         horaires.put(DayOfWeek.SUNDAY, new ArrayList<>(){{add(null);}});
 
         Ressource ressource = new Ressource("1", "1", "Salle de réunion de 10 personnes", new ArrayList<>(), horaires);
-        ressourceRepository.add(ressource);
+        inMemoryRessourceRepository.add(ressource);
 
         // When
         Reservation reservation = null;
