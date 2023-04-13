@@ -1,4 +1,4 @@
-package model;
+package model.etablissement;
 
 public class EtablissementNonTrouveException extends Exception {
     public EtablissementNonTrouveException(String etablissementId) {

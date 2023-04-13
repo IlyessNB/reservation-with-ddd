@@ -1,4 +1,4 @@
-package model;
+package model.utilisateur;
 
 public class UtilisateurNonTrouveException extends Exception {
     public UtilisateurNonTrouveException(String utilisateurId) {

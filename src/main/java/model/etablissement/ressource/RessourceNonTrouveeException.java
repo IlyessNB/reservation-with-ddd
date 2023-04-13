@@ -1,4 +1,4 @@
-package model;
+package model.etablissement.ressource;
 
 public class RessourceNonTrouveeException extends Exception {
     public RessourceNonTrouveeException(String ressourceId) {
