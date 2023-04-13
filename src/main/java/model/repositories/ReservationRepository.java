@@ -11,6 +11,6 @@ public interface ReservationRepository {
 
    void add(Reservation reservation);
 
-   List<Reservation> trouverParDate(String ressourceId, LocalDate date);
+   List<Reservation> findByDate(String resourceId, LocalDate date);
 
 }

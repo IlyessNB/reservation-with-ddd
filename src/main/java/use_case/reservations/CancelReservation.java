@@ -1,4 +1,4 @@
 package use_case.reservations;
 
-public class AnnulerReservation {
+public class CancelReservation {
 }

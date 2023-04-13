@@ -1,22 +1,22 @@
-package model.etablissement;
+package model.institution;
 
 import java.time.LocalTime;
 
-public class Horaires {
+public class Timetable {
     private final LocalTime heureOuverture;
     private final LocalTime heureFermeture;
 
 
-    public Horaires(LocalTime heureOuverture, LocalTime heureFermeture) {
+    public Timetable(LocalTime heureOuverture, LocalTime heureFermeture) {
         this.heureOuverture = heureOuverture;
         this.heureFermeture = heureFermeture;
     }
 
-    public LocalTime getHeureOuverture() {
+    public LocalTime getOpeningTime() {
         return heureOuverture;
     }
 
-    public LocalTime getHeureFermeture() {
+    public LocalTime getClosingTime() {
         return heureFermeture;
     }
 }

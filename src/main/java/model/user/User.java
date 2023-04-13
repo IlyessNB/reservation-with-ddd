@@ -1,12 +1,12 @@
-package model.utilisateur;
+package model.user;
 
-public class Utilisateur {
+public class User {
     String utlisateurId;
     String nom;
     String prenom;
     String mail;
 
-    public Utilisateur(String utlisateurId, String nom, String prenom, String mail) {
+    public User(String utlisateurId, String nom, String prenom, String mail) {
         this.utlisateurId = utlisateurId;
         this.nom = nom;
         this.prenom = prenom;

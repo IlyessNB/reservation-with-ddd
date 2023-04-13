@@ -27,11 +27,11 @@ public class InMemoryReservationRepository implements ReservationRepository {
    }
 
    @Override
-   public List<Reservation> trouverParDate(String ressourceId, LocalDate date) {
+   public List<Reservation> findByDate(String resourceId, LocalDate date) {
       return reservations
          .stream()
-         .filter(reservation -> reservation.estDeLaMemeDate(date))
-         .filter(reservation -> reservation.getRessourceId().equals(ressourceId))
+         .filter(reservation -> reservation.isSameDate(date))
+         .filter(reservation -> reservation.getResourceId().equals(resourceId))
          .collect(Collectors.toList());
    }
 
