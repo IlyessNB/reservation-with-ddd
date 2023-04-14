@@ -17,13 +17,11 @@ public class InMemoryUserRepository implements UserRepository {
     }
 
     @Override
-    public User findById(UserId id) throws UserNotFoundException {
-        User userFound = users.stream().filter(user -> user.getUserId().equals(id)).collect(Collectors.toList()).get(0);
+    public void exists(UserId id) throws UserNotFoundException {
+        List<User> userFound = users.stream().filter(user -> user.getUserId().equals(id)).collect(Collectors.toList());
 
-        if (userFound == null) {
+        if (userFound.isEmpty()) {
             throw new UserNotFoundException(id);
-        } else {
-            return userFound;
         }
     }
 

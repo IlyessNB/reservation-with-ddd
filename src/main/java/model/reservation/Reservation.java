@@ -8,13 +8,13 @@ import java.util.List;
 public class Reservation {
     private final ReservationId reservationId;
     private final UserId userId;
-    private final DateWithTimeRange timeRange;
+    private final DateWithTimeRange dateWithTimeRange;
     private final ResourceId resourceId;
 
     private Reservation(ReservationId reservationId, UserId userId, DateWithTimeRange timeRange, ResourceId resourceId) {
         this.reservationId = reservationId;
         this.userId = userId;
-        this.timeRange = timeRange;
+        this.dateWithTimeRange = timeRange;
         this.resourceId = resourceId;
     }
 
@@ -28,8 +28,8 @@ public class Reservation {
         return resourceId;
     }
 
-    public DateWithTimeRange getTimeRange() {
-        return timeRange;
+    public DateWithTimeRange getDateWithTimeRange() {
+        return dateWithTimeRange;
     }
 
     public void verifyConflicts(List<Reservation> reservationOnDate) throws ConflictualReservationsException {
@@ -37,9 +37,9 @@ public class Reservation {
             throw new ConflictualReservationsException(
                     userId,
                     resourceId,
-                    timeRange.getDate(),
-                    timeRange.getStartTime(),
-                    timeRange.getEndTime()
+                    dateWithTimeRange.getDate(),
+                    dateWithTimeRange.getStartTime(),
+                    dateWithTimeRange.getEndTime()
             );
         }
     }
