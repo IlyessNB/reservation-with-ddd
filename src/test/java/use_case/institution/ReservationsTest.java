@@ -48,6 +48,7 @@ class ReservationsTest {
         reservationRepository = new InMemoryReservationRepository();
         resourceRepository = new InMemoryResourceRepository();
         reserveResource = new ReserveResource(
+                userRepository,
                 reservationRepository,
                 resourceRepository,
                 new ReservationFactory(idGenerator)
@@ -86,13 +87,13 @@ class ReservationsTest {
         userRepository.save(user);
 
         Resource resource = resourceFactory.create("1", "Salle de réunion de 10 personnes", new ArrayList<>(), resourceTimetables);
-        resourceRepository.add(resource);
+        resourceRepository.save(resource);
 
 
         final LocalDateTime date = LocalDateTime.now().plusWeeks(2).with(DayOfWeek.MONDAY).with(LocalTime.of(10, 0));
         // When
-        Reservation reservation = null;
-        Resource resourceName = null;
+        Reservation reservation;
+        Resource reservationResourceName;
         try {
             reservation = reserveResource.reserve(
                     user.getUserId(),
@@ -101,15 +102,16 @@ class ReservationsTest {
                     LocalTime.of(date.getHour() + 1, date.getMinute()),
                     date.toLocalDate()
             );
-            resourceName = resourceRepository.findById(reservation.getResourceId());
+            reservationResourceName = resourceRepository.findById(reservation.getResourceId());
         } catch (Exception e) {
             e.printStackTrace();
+            return;
         }
 
         // Then
         Assertions.assertNotNull(reservation);
-        Assertions.assertEquals(reservation.getResourceId(), resource.getResourceId());
-        Assertions.assertEquals(resourceName.getName(), "Salle de réunion de 10 personnes");
+        Assertions.assertEquals(resource.getResourceId(), reservation.getResourceId());
+        Assertions.assertEquals("Salle de réunion de 10 personnes", reservationResourceName.getName());
     }
 
     @Test
@@ -119,7 +121,7 @@ class ReservationsTest {
         userRepository.save(user);
 
         Resource resource = resourceFactory.create("1", "Salle de réunion de 10 personnes", new ArrayList<>(), resourceTimetables);
-        resourceRepository.add(resource);
+        resourceRepository.save(resource);
 
         final LocalDateTime date = LocalDateTime.now().plusWeeks(2).with(DayOfWeek.SUNDAY).with(LocalTime.of(10, 0));
         // When
@@ -141,7 +143,7 @@ class ReservationsTest {
         userRepository.save(user2);
 
         Resource resource = resourceFactory.create("1", "Salle de réunion de 10 personnes", new ArrayList<>(), resourceTimetables);
-        resourceRepository.add(resource);
+        resourceRepository.save(resource);
 
         final LocalDateTime date = LocalDateTime.now().plusWeeks(2).with(DayOfWeek.MONDAY).with(LocalTime.of(10, 0));
         try {
@@ -175,15 +177,14 @@ class ReservationsTest {
         User user = userFactory.create("DOE", "John", "jdoe@gmail.com");
         userRepository.save(user);
 
-        Resource resource = resourceFactory.create("1", "Salle de réunion de 10 personnes", new ArrayList<>(), resourceTimetables);
         final LocalDateTime date = LocalDateTime.now().plusWeeks(2).with(DayOfWeek.MONDAY).with(LocalTime.of(10, 0));
 
         // Then
-        Assertions.assertThrows(UserNotFoundException.class, () -> {
+        Assertions.assertThrows(ResourceNotFoundException.class, () -> {
             // When
             reserveResource.reserve(
                     user.getUserId(),
-                    resource.getResourceId(),
+                    new ResourceId("unknown resource id"),
                     LocalTime.of(date.getHour(), date.getMinute()),
                     LocalTime.of(date.getHour() + 1, date.getMinute()),
                     date.toLocalDate()
@@ -197,12 +198,12 @@ class ReservationsTest {
         User user = userFactory.create("DOE", "John", "jdoe@gmail.com");
 
         Resource resource = resourceFactory.create("1", "Salle de réunion de 10 personnes", new ArrayList<>(), resourceTimetables);
-        resourceRepository.add(resource);
+        resourceRepository.save(resource);
 
         final LocalDateTime date = LocalDateTime.now().plusWeeks(2).with(DayOfWeek.MONDAY).with(LocalTime.of(10, 0));
 
         // Then
-        Assertions.assertThrows(ResourceNotFoundException.class, () -> {
+        Assertions.assertThrows(UserNotFoundException.class, () -> {
             // When
             reserveResource.reserve(
                     user.getUserId(),

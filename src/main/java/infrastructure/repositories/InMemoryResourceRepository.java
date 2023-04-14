@@ -28,7 +28,7 @@ public class InMemoryResourceRepository implements ResourceRepository {
     }
 
     @Override
-    public void add(Resource resource) {
+    public void save(Resource resource) {
         resources.add(resource);
     }
 }
