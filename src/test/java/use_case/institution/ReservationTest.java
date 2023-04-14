@@ -11,6 +11,7 @@ import model.common.IdGenerator;
 import model.reservation.*;
 import model.resource.*;
 import model.user.User;
+import model.user.UserId;
 import model.user.UserNotFoundException;
 import model.user.UserRepository;
 import org.junit.jupiter.api.Assertions;
@@ -241,13 +242,6 @@ class ReservationTest {
         Assertions.assertEquals(userId.hashCode(), userId2.hashCode());
     }
 
-    /***
-     *
-     23     private void checkClosedOnDay(List<Timetable> timeTableOfTheDay, ResourceId resourceId, DateWithTimeRange timeRange) throws ResourceIsClosedException {
-     24         if (timeTableOfTheDay == null || timeTableOfTheDay.isEmpty()) {
-     25             throw new ResourceIsClosedException(resourceId, timeRange);
-     26         }
-     */
 
     @Test
     void test_is_close_checking() {
