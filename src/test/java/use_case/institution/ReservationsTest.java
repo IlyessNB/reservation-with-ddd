@@ -10,9 +10,11 @@ import infrastructure.repositories.InMemoryUserRepository;
 import model.common.IdGenerator;
 import model.reservation.ConflictualReservationsException;
 import model.reservation.Reservation;
+import model.reservation.ReservationId;
 import model.reservation.ReservationRepository;
 import model.resource.*;
 import model.user.User;
+import model.user.UserId;
 import model.user.UserNotFoundException;
 import model.user.UserRepository;
 import org.junit.jupiter.api.Assertions;
@@ -214,4 +216,33 @@ class ReservationsTest {
             );
         });
     }
+
+    @Test
+    void test_reservation_id_equality() {
+        ReservationId reservationId = new ReservationId("12456");
+        ReservationId reservationId2 = new ReservationId("12456");
+        Assertions.assertEquals(reservationId, reservationId2);
+    }
+
+    @Test
+    void test_reservation_id_hash() {
+        ReservationId reservationId = new ReservationId("12456");
+        ReservationId reservationId2 = new ReservationId("12456");
+        Assertions.assertEquals(reservationId.hashCode(), reservationId2.hashCode());
+    }
+
+    @Test
+    void test_reservation_id_value() {
+        ReservationId reservationId = new ReservationId("12456");
+        Assertions.assertEquals(reservationId.getValue(), "12456");
+    }
+
+    @Test
+    void test_user_id_hash() {
+        UserId userId = new UserId("123");
+        UserId userId2 = new UserId("123");
+        Assertions.assertEquals(userId.hashCode(), userId2.hashCode());
+    }
+
+
 }
