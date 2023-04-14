@@ -10,8 +10,7 @@ import java.util.List;
 public interface ReservationRepository {
     Reservation create(UserId userId, ResourceId resourceId, LocalTime startTime, LocalTime endTime, LocalDate date);
 
-    void add(Reservation reservation);
+    void save(Reservation reservation);
 
-    List<Reservation> findByDate(ResourceId resourceId, LocalDate date);
-
+    List<Reservation> findByTimeRange(ResourceId resourceId, TimeRange timeRange);
 }

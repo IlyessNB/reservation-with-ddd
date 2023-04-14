@@ -1,9 +1,9 @@
 package model.institution;
 
 public class Institution {
-    String id;
-    String name;
-    String address;
+    private final String id;
+    private final String name;
+    private final String address;
 
     private Institution(String id, String name, String address) {
         this.id = id;

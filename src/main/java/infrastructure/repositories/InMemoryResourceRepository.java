@@ -27,12 +27,12 @@ public class InMemoryResourceRepository implements ResourceRepository {
 
     @Override
     public Resource findById(ResourceId id) throws ResourceNotFoundException {
-        Resource resourceFound = resources.stream().filter(resource -> resource.getResourceId().equals(id)).collect(Collectors.toList()).get(0);
+        List<Resource> resourcesFound = resources.stream().filter(resource -> resource.getResourceId().equals(id)).collect(Collectors.toList());
 
-        if (resourceFound == null) {
+        if (resourcesFound.isEmpty()) {
             throw new ResourceNotFoundException(id);
         } else {
-            return resourceFound;
+            return resourcesFound.get(0);
         }
     }
 

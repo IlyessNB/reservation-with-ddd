@@ -5,5 +5,5 @@ public interface UserRepository {
 
     User findById(UserId id) throws UserNotFoundException;
 
-    void add(User user);
+    void save(User user);
 }

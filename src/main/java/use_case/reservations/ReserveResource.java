@@ -1,15 +1,13 @@
 package use_case.reservations;
 
-import model.resource.Resource;
-import model.resource.ResourceIsClosedException;
-import model.resource.ResourceNotFoundException;
-import model.reservation.ReservationRepository;
-import model.resource.ResourceRepository;
-import model.user.UserRepository;
+import infrastructure.factories.ReservationFactory;
 import model.reservation.ConflictualReservationsException;
 import model.reservation.Reservation;
-import model.resource.ResourceId;
+import model.reservation.ReservationRepository;
+import model.reservation.TimeRange;
+import model.resource.*;
 import model.user.UserId;
+import model.user.UserRepository;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -19,24 +17,25 @@ public class ReserveResource {
     UserRepository userRepository;
     ReservationRepository reservationRepository;
     ResourceRepository resourceRepository;
+    ReservationFactory reservationFactory;
 
-    public ReserveResource(UserRepository userRepository, ReservationRepository reservationRepository, ResourceRepository resourceRepository) {
+    public ReserveResource(UserRepository userRepository, ReservationRepository reservationRepository, ResourceRepository resourceRepository, ReservationFactory reservationFactory) {
         this.userRepository = userRepository;
         this.reservationRepository = reservationRepository;
         this.resourceRepository = resourceRepository;
+        this.reservationFactory = reservationFactory;
     }
 
     public Reservation reserve(UserId userId, ResourceId resourceId, LocalTime startTime, LocalTime endTime, LocalDate date) throws ResourceNotFoundException, ResourceIsClosedException, ConflictualReservationsException {
-        Reservation reservation = reservationRepository.create(userId, resourceId, startTime, endTime, date);
-        reservation.checkTimeCoherence();
+        TimeRange timeRange = TimeRange.of(startTime, endTime, date);
+        final Reservation reservation = reservationFactory.create(userId, resourceId, timeRange);
+        final Resource resource = resourceRepository.findById(resourceId);
+        final List<Reservation> reservationsInTimeRange = reservationRepository.findByTimeRange(resourceId, reservation.getTimeRange());
 
-        Resource resource = resourceRepository.findById(resourceId);
-        List<Reservation> reservationRepositoryByDate = reservationRepository.findByDate(resourceId, date);
+        resource.verifyIsOpen(reservation.getTimeRange());
+        reservation.verifyConflicts(reservationsInTimeRange);
 
-        resource.verifyIsOpen(startTime, endTime, date);
-        reservation.verifyConflicts(startTime, endTime, date, reservationRepositoryByDate);
-
-        reservationRepository.add(reservation);
+        reservationRepository.save(reservation);
         return reservation;
     }
 }

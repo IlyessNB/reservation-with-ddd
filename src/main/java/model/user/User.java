@@ -1,10 +1,10 @@
 package model.user;
 
 public class User {
-    UserId userId;
-    String lastName;
-    String firstName;
-    String email;
+    private final UserId userId;
+    private final String lastName;
+    private final String firstName;
+    private final String email;
 
     private User(UserId userId, String lastName, String firstName, String email) {
         this.userId = userId;
