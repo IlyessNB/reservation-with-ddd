@@ -1,13 +1,13 @@
 package use_case.institution;
 
-import infrastructure.repository.InMemoryInstitutionRepository;
-import infrastructure.repository.InMemoryReservationRepository;
-import infrastructure.repository.InMemoryResourceRepository;
-import infrastructure.repository.InMemoryUserRepository;
-import model.institution.Institution;
-import model.institution.Timetable;
-import model.institution.resource.Resource;
+import infrastructure.common.UUIDGenerator;
+import infrastructure.repositories.InMemoryReservationRepository;
+import infrastructure.repositories.InMemoryResourceRepository;
+import infrastructure.repositories.InMemoryUserRepository;
+import model.common.IdGenerator;
 import model.reservation.Reservation;
+import model.resource.Resource;
+import model.resource.Timetable;
 import model.user.User;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -23,20 +23,17 @@ import java.util.List;
 import java.util.Map;
 
 class ReservationsTest {
-
-    // BeforeAll
     static ReserveResource reserveResource;
     static InMemoryUserRepository inMemoryUserRepository;
     static InMemoryReservationRepository inMemoryReservationRepository;
-    static InMemoryInstitutionRepository inMemoryEtablissementRepository;
     static InMemoryResourceRepository inMemoryResourceRepository;
 
     @BeforeAll
     static void beforeAll() {
-        inMemoryUserRepository = new InMemoryUserRepository();
-        inMemoryReservationRepository = new InMemoryReservationRepository();
-        inMemoryResourceRepository = new InMemoryResourceRepository();
-        inMemoryEtablissementRepository = new InMemoryInstitutionRepository();
+        IdGenerator idGenerator = new UUIDGenerator();
+        inMemoryUserRepository = new InMemoryUserRepository(idGenerator);
+        inMemoryReservationRepository = new InMemoryReservationRepository(idGenerator);
+        inMemoryResourceRepository = new InMemoryResourceRepository(idGenerator);
         reserveResource = new ReserveResource(
                 inMemoryUserRepository,
                 inMemoryReservationRepository,
@@ -47,30 +44,41 @@ class ReservationsTest {
     @Test
     void test_faire_une_reservation_avec_succes() {
         // Given
-        User user = new User("1", "DOE", "John", "jdoe@gmail.com");
-        inMemoryUserRepository.create(user);
-
-        Institution institution = new Institution("1", "Etablissement de test", "1 rue de test, 75000 Paris");
-        inMemoryEtablissementRepository.add(institution);
+        User user = inMemoryUserRepository.create("DOE", "John", "jdoe@gmail.com");
+        inMemoryUserRepository.add(user);
 
         Map<DayOfWeek, List<Timetable>> horaires = new HashMap<>();
-        horaires.put(DayOfWeek.MONDAY, new ArrayList<>(){{add(new Timetable(LocalTime.of(8, 0), LocalTime.of(20, 0)));}});
-        horaires.put(DayOfWeek.TUESDAY, new ArrayList<>(){{add(new Timetable(LocalTime.of(8, 0), LocalTime.of(20, 0)));}});
-        horaires.put(DayOfWeek.WEDNESDAY, new ArrayList<>(){{add(new Timetable(LocalTime.of(8, 0), LocalTime.of(20, 0)));}});
-        horaires.put(DayOfWeek.THURSDAY, new ArrayList<>(){{add(new Timetable(LocalTime.of(8, 0), LocalTime.of(20, 0)));}});
-        horaires.put(DayOfWeek.FRIDAY, new ArrayList<>(){{add(new Timetable(LocalTime.of(8, 0), LocalTime.of(20, 0)));}});
-        horaires.put(DayOfWeek.SATURDAY, new ArrayList<>(){{add(null);}});
-        horaires.put(DayOfWeek.SUNDAY, new ArrayList<>(){{add(null);}});
+        horaires.put(DayOfWeek.MONDAY, new ArrayList<>() {{
+            add(new Timetable(LocalTime.of(8, 0), LocalTime.of(20, 0)));
+        }});
+        horaires.put(DayOfWeek.TUESDAY, new ArrayList<>() {{
+            add(new Timetable(LocalTime.of(8, 0), LocalTime.of(20, 0)));
+        }});
+        horaires.put(DayOfWeek.WEDNESDAY, new ArrayList<>() {{
+            add(new Timetable(LocalTime.of(8, 0), LocalTime.of(20, 0)));
+        }});
+        horaires.put(DayOfWeek.THURSDAY, new ArrayList<>() {{
+            add(new Timetable(LocalTime.of(8, 0), LocalTime.of(20, 0)));
+        }});
+        horaires.put(DayOfWeek.FRIDAY, new ArrayList<>() {{
+            add(new Timetable(LocalTime.of(8, 0), LocalTime.of(20, 0)));
+        }});
+        horaires.put(DayOfWeek.SATURDAY, new ArrayList<>() {{
+            add(null);
+        }});
+        horaires.put(DayOfWeek.SUNDAY, new ArrayList<>() {{
+            add(null);
+        }});
 
-        Resource resource = new Resource("1", "1", "Salle de réunion de 10 personnes", new ArrayList<>(), horaires);
+        Resource resource = inMemoryResourceRepository.create("1", "Salle de réunion de 10 personnes", new ArrayList<>(), horaires);
         inMemoryResourceRepository.add(resource);
 
         // When
         Reservation reservation = null;
         try {
             reservation = reserveResource.reserve(
-                    user.getUtlisateurId(),
-                    resource.getId(),
+                    user.getUserId(),
+                    resource.getResourceId(),
                     LocalTime.of(10, 0),
                     LocalTime.of(11, 0),
                     LocalDate.of(2023, 4, 13)
@@ -81,7 +89,7 @@ class ReservationsTest {
 
         // Then
         Assertions.assertNotNull(reservation);
-        Assertions.assertEquals(reservation.getResourceId(), resource.getId());
+        Assertions.assertEquals(reservation.getResourceId(), resource.getResourceId());
 
     }
 }

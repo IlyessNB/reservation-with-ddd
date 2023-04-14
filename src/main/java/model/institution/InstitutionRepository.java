@@ -1,7 +1,4 @@
-package model.repositories;
-
-import model.institution.Institution;
-import model.institution.InstitutionNotFoundException;
+package model.institution;
 
 public interface InstitutionRepository {
     Institution findById(String id) throws InstitutionNotFoundException;

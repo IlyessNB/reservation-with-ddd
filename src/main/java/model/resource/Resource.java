@@ -1,6 +1,4 @@
-package model.institution.resource;
-
-import model.institution.Timetable;
+package model.resource;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
@@ -9,30 +7,33 @@ import java.util.List;
 import java.util.Map;
 
 public class Resource {
-    String id;
+    ResourceId resourceId;
     String institutionId;
     String name;
     List<String> equipments;
-
     Map<DayOfWeek, List<Timetable>> timetablesByDayOfWeek;
 
-    public Resource(String id, String institutionId, String name, List<String> equipments, Map<DayOfWeek, List<Timetable>> timetablesByDayOfWeek) {
-        this.id = id;
+    private Resource(ResourceId resourceId, String institutionId, String name, List<String> equipments, Map<DayOfWeek, List<Timetable>> timetablesByDayOfWeek) {
+        this.resourceId = resourceId;
         this.institutionId = institutionId;
         this.name = name;
         this.equipments = equipments;
         this.timetablesByDayOfWeek = timetablesByDayOfWeek;
     }
 
-    public void isOpen(LocalTime startTime, LocalTime endTime, LocalDate date) throws ResourceIsClosedException {
+    public static Resource of(ResourceId resourceId, String institutionId, String name, List<String> equipments, Map<DayOfWeek, List<Timetable>> timetablesByDayOfWeek) {
+        return new Resource(resourceId, institutionId, name, equipments, timetablesByDayOfWeek);
+    }
+
+    public void verifyIsOpen(LocalTime startTime, LocalTime endTime, LocalDate date) throws ResourceIsClosedException {
         DayOfWeek dayOfWeek = date.getDayOfWeek();
         List<Timetable> timetables = timetablesByDayOfWeek.get(dayOfWeek);
         if (timetables == null || timetables.isEmpty()) {
-            throw new ResourceIsClosedException(id, date, startTime, endTime);
+            throw new ResourceIsClosedException(resourceId, date, startTime, endTime);
         }
         for (Timetable timetable : timetables) {
             if (timetable == null || !isBetween(timetable.getOpeningTime(), timetable.getClosingTime(), startTime, endTime)) {
-                throw new ResourceIsClosedException(id, date, startTime, endTime);
+                throw new ResourceIsClosedException(resourceId, date, startTime, endTime);
             }
         }
     }
@@ -41,8 +42,8 @@ public class Resource {
         return reservationStartTime.isAfter(openingTime) && reservationEndTime.isBefore(closingTime);
     }
 
-    public String getId() {
-        return id;
+    public ResourceId getResourceId() {
+        return resourceId;
     }
 
     public String getName() {

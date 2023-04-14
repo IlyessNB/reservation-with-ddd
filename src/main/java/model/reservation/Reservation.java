@@ -1,20 +1,34 @@
 package model.reservation;
 
+import model.resource.ResourceId;
+import model.user.UserId;
+
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 
 public class Reservation {
-
-    String reservationId;
-    String userId;
+    ReservationId reservationId;
+    UserId userId;
     LocalTime startTime;
     LocalTime endTime;
     LocalDate date;
-    String resourceId;
+    ResourceId resourceId;
 
-    public String getResourceId() {
+    private Reservation(ReservationId reservationId, UserId userId, LocalTime startTime, LocalTime endTime, LocalDate date, ResourceId resourceId) {
+        this.reservationId = reservationId;
+        this.userId = userId;
+        this.startTime = startTime;
+        this.endTime = endTime;
+        this.date = date;
+        this.resourceId = resourceId;
+    }
+
+    public static Reservation of(ReservationId reservationId, UserId userId, ResourceId resourceId, LocalTime startTime, LocalTime endTime, LocalDate date) {
+        return new Reservation(reservationId, userId, startTime, endTime, date, resourceId);
+    }
+
+    public ResourceId getResourceId() {
         return resourceId;
     }
 
@@ -22,7 +36,7 @@ public class Reservation {
         return this.date.equals(date);
     }
 
-    public void checkConflicts(LocalTime startTime, LocalTime endTime, LocalDate date, List<Reservation> reservationOnDate) throws ConflictualReservationsException {
+    public void verifyConflicts(LocalTime startTime, LocalTime endTime, LocalDate date, List<Reservation> reservationOnDate) throws ConflictualReservationsException {
         if (reservationOnDate == null || reservationOnDate.isEmpty()) {
             return;
         }
@@ -50,20 +64,9 @@ public class Reservation {
         }
     }
 
-    public Reservation(String reservationId, String userId, LocalTime startTime, LocalTime endTime, LocalDate date, String resourceId) {
-        this.reservationId = reservationId;
-        this.userId = userId;
-        this.startTime = startTime;
-        this.endTime = endTime;
-        this.date = date;
-        this.resourceId = resourceId;
-    }
-
-    public static Reservation create(String userId, String resourceId, LocalTime startTime, LocalTime endTime, LocalDate date) {
-        return new Reservation(LocalDateTime.now().toString(), userId, startTime, endTime, date, resourceId);
-    }
-
-    public boolean check() {
-        return startTime.isBefore(endTime);
+    public void checkTimeCoherence() {
+        if (!startTime.isBefore(endTime)) {
+            throw new IllegalArgumentException("La reservation n'est pas valide");
+        }
     }
 }

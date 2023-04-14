@@ -1,4 +1,4 @@
-package model.institution;
+package model.resource;
 
 import java.time.LocalTime;
 

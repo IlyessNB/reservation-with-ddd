@@ -1,32 +1,24 @@
 package model.user;
 
 public class User {
-    String utlisateurId;
-    String nom;
-    String prenom;
-    String mail;
+    UserId userId;
+    String lastName;
+    String firstName;
+    String email;
 
-    public User(String utlisateurId, String nom, String prenom, String mail) {
-        this.utlisateurId = utlisateurId;
-        this.nom = nom;
-        this.prenom = prenom;
-        this.mail = mail;
+    private User(UserId userId, String lastName, String firstName, String email) {
+        this.userId = userId;
+        this.lastName = lastName;
+        this.firstName = firstName;
+        this.email = email;
+    }
+
+    public static User of(UserId userId, String lastName, String firstName, String email) {
+        return new User(userId, lastName, firstName, email);
     }
 
 
-    public String getUtlisateurId() {
-        return utlisateurId;
-    }
-
-    public String getNom() {
-        return nom;
-    }
-
-    public String getPrenom() {
-        return prenom;
-    }
-
-    public String getMail() {
-        return mail;
+    public UserId getUserId() {
+        return userId;
     }
 }

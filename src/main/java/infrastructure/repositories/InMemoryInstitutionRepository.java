@@ -1,8 +1,8 @@
-package infrastructure.repository;
+package infrastructure.repositories;
 
 import model.institution.Institution;
 import model.institution.InstitutionNotFoundException;
-import model.repositories.InstitutionRepository;
+import model.institution.InstitutionRepository;
 
 import java.util.ArrayList;
 import java.util.List;
