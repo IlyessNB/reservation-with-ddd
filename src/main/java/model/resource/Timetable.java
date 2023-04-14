@@ -1,5 +1,7 @@
 package model.resource;
 
+import model.reservation.DateWithTimeRange;
+
 import java.time.LocalTime;
 
 public class Timetable {
@@ -11,11 +13,11 @@ public class Timetable {
         this.closingTime = closingTime;
     }
 
-    public LocalTime getOpeningTime() {
-        return openingTime;
+    public boolean isClosedDuringTimeRange(DateWithTimeRange timeRange) {
+        return !isBetween(timeRange.getStartTime(), timeRange.getEndTime());
     }
 
-    public LocalTime getClosingTime() {
-        return closingTime;
+    private boolean isBetween(LocalTime reservationStartTime, LocalTime reservationEndTime) {
+        return (reservationStartTime.isAfter(openingTime) || reservationStartTime.equals(openingTime)) && (reservationEndTime.isBefore(closingTime) || reservationEndTime.equals(closingTime));
     }
 }

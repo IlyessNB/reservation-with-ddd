@@ -3,7 +3,6 @@ package model.resource;
 import model.reservation.DateWithTimeRange;
 
 import java.time.DayOfWeek;
-import java.time.LocalTime;
 import java.util.List;
 import java.util.Map;
 
@@ -28,13 +27,9 @@ public class ResourceTimetables {
 
     private void checkClosedDuringTimeRange(List<Timetable> timeTableOfTheDay, ResourceId resourceId, DateWithTimeRange timeRange) throws ResourceIsClosedException {
         for (Timetable timetable : timeTableOfTheDay) {
-            if (timetable == null || !isBetween(timetable.getOpeningTime(), timetable.getClosingTime(), timeRange.getStartTime(), timeRange.getEndTime())) {
+            if (timetable == null || timetable.isClosedDuringTimeRange(timeRange)) {
                 throw new ResourceIsClosedException(resourceId, timeRange);
             }
         }
-    }
-
-    private boolean isBetween(LocalTime openingTime, LocalTime closingTime, LocalTime reservationStartTime, LocalTime reservationEndTime) {
-        return (reservationStartTime.isAfter(openingTime) || reservationStartTime.equals(openingTime)) && (reservationEndTime.isBefore(closingTime) || reservationEndTime.equals(closingTime));
     }
 }

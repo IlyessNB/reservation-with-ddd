@@ -2,13 +2,13 @@ package use_case.reservations;
 
 import infrastructure.factories.ReservationFactory;
 import model.reservation.*;
-import model.resource.*;
-import model.user.UserId;
+import model.resource.Resource;
+import model.resource.ResourceIsClosedException;
+import model.resource.ResourceNotFoundException;
+import model.resource.ResourceRepository;
 import model.user.UserNotFoundException;
 import model.user.UserRepository;
 
-import java.time.LocalDate;
-import java.time.LocalTime;
 import java.util.List;
 
 public class ReserveResource {
@@ -24,13 +24,13 @@ public class ReserveResource {
         this.reservationFactory = reservationFactory;
     }
 
-    public Reservation reserve(UserId userId, ResourceId resourceId, LocalTime startTime, LocalTime endTime, LocalDate date) throws ResourceNotFoundException, ResourceIsClosedException, ConflictualReservationsException, UserNotFoundException, ReservationIncoherentTimeRangeException, ReservationDateIsInPastException {
-        userRepository.exists(userId);
+    public Reservation reserve(ReserveResourceDto reserveResourceDto) throws ResourceNotFoundException, ResourceIsClosedException, ConflictualReservationsException, UserNotFoundException, ReservationIncoherentTimeRangeException, ReservationDateIsInPastException {
+        userRepository.exists(reserveResourceDto.userId);
 
-        DateWithTimeRange timeRange = DateWithTimeRange.of(startTime, endTime, date);
-        final Resource resource = resourceRepository.findById(resourceId);
-        final Reservation reservation = reservationFactory.create(userId, resourceId, timeRange);
-        final List<Reservation> reservationsInTimeRange = reservationRepository.findByDateWithTimeRange(resourceId, reservation.getDateWithTimeRange());
+        DateWithTimeRange timeRange = DateWithTimeRange.of(reserveResourceDto.startTime, reserveResourceDto.endTime, reserveResourceDto.date);
+        final Resource resource = resourceRepository.findById(reserveResourceDto.resourceId);
+        final Reservation reservation = reservationFactory.create(reserveResourceDto.userId, reserveResourceDto.resourceId, timeRange);
+        final List<Reservation> reservationsInTimeRange = reservationRepository.findByDateWithTimeRange(reserveResourceDto.resourceId, reservation.getDateWithTimeRange());
 
         resource.verifyIsOpen(reservation.getDateWithTimeRange());
         reservation.verifyConflicts(reservationsInTimeRange);

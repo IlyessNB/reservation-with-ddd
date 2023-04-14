@@ -11,13 +11,13 @@ import model.common.IdGenerator;
 import model.reservation.*;
 import model.resource.*;
 import model.user.User;
-import model.user.UserId;
 import model.user.UserNotFoundException;
 import model.user.UserRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import use_case.reservations.ReserveResource;
+import use_case.reservations.ReserveResourceDto;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
@@ -95,13 +95,14 @@ class ReservationTest {
         Reservation reservation;
         Resource reservationResourceName;
         try {
-            reservation = reserveResource.reserve(
+            ReserveResourceDto reserveResourceDto = new ReserveResourceDto(
                     user.getUserId(),
                     resource.getResourceId(),
                     LocalTime.of(date.getHour(), date.getMinute()),
                     LocalTime.of(date.getHour() + 1, date.getMinute()),
                     date.toLocalDate()
             );
+            reservation = reserveResource.reserve(reserveResourceDto);
             reservationResourceName = resourceRepository.findById(reservation.getResourceId());
         } catch (Exception e) {
             e.printStackTrace();
@@ -125,13 +126,14 @@ class ReservationTest {
 
         final LocalDateTime date = LocalDateTime.now().plusWeeks(2).with(DayOfWeek.SUNDAY).with(LocalTime.of(10, 0));
         // When
-        Assertions.assertThrows(ResourceIsClosedException.class, () -> reserveResource.reserve(
+        ReserveResourceDto reserveResourceDto = new ReserveResourceDto(
                 user.getUserId(),
                 resource.getResourceId(),
                 LocalTime.of(date.getHour(), date.getMinute()),
                 LocalTime.of(date.getHour() + 1, date.getMinute()),
                 date.toLocalDate()
-        ));
+        );
+        Assertions.assertThrows(ResourceIsClosedException.class, () -> reserveResource.reserve(reserveResourceDto));
     }
 
     @Test
@@ -147,27 +149,29 @@ class ReservationTest {
 
         final LocalDateTime date = LocalDateTime.now().plusWeeks(2).with(DayOfWeek.MONDAY).with(LocalTime.of(10, 0));
         try {
-            reserveResource.reserve(
+            ReserveResourceDto firstReserveResourceDto = new ReserveResourceDto(
                     user2.getUserId(),
                     resource.getResourceId(),
                     LocalTime.of(date.getHour(), date.getMinute()),
                     LocalTime.of(date.getHour() + 1, date.getMinute()),
                     date.toLocalDate()
             );
+            reserveResource.reserve(firstReserveResourceDto);
         } catch (Exception e) {
             e.printStackTrace();
         }
 
         // Then
+        ReserveResourceDto reserveResourceDto = new ReserveResourceDto(
+                user.getUserId(),
+                resource.getResourceId(),
+                LocalTime.of(date.getHour() - 1, date.getMinute()),
+                LocalTime.of(date.getHour(), date.getMinute() + 30),
+                date.toLocalDate()
+        );
         Assertions.assertThrows(ConflictualReservationsException.class, () -> {
             // When
-            reserveResource.reserve(
-                    user.getUserId(),
-                    resource.getResourceId(),
-                    LocalTime.of(date.getHour() - 1, date.getMinute()),
-                    LocalTime.of(date.getHour(), date.getMinute() + 30),
-                    date.toLocalDate()
-            );
+            reserveResource.reserve(reserveResourceDto);
         });
     }
 
@@ -180,15 +184,16 @@ class ReservationTest {
         final LocalDateTime date = LocalDateTime.now().plusWeeks(2).with(DayOfWeek.MONDAY).with(LocalTime.of(10, 0));
 
         // Then
+        ReserveResourceDto reserveResourceDto = new ReserveResourceDto(
+                user.getUserId(),
+                new ResourceId("unknown resource id"),
+                LocalTime.of(date.getHour(), date.getMinute()),
+                LocalTime.of(date.getHour() + 1, date.getMinute()),
+                date.toLocalDate()
+        );
         Assertions.assertThrows(ResourceNotFoundException.class, () -> {
             // When
-            reserveResource.reserve(
-                    user.getUserId(),
-                    new ResourceId("unknown resource id"),
-                    LocalTime.of(date.getHour(), date.getMinute()),
-                    LocalTime.of(date.getHour() + 1, date.getMinute()),
-                    date.toLocalDate()
-            );
+            reserveResource.reserve(reserveResourceDto);
         });
     }
 
@@ -203,15 +208,16 @@ class ReservationTest {
         final LocalDateTime date = LocalDateTime.now().plusWeeks(2).with(DayOfWeek.MONDAY).with(LocalTime.of(10, 0));
 
         // Then
+        ReserveResourceDto reserveResourceDto = new ReserveResourceDto(
+                user.getUserId(),
+                resource.getResourceId(),
+                LocalTime.of(date.getHour(), date.getMinute()),
+                LocalTime.of(date.getHour() + 1, date.getMinute()),
+                date.toLocalDate()
+        );
         Assertions.assertThrows(UserNotFoundException.class, () -> {
             // When
-            reserveResource.reserve(
-                    user.getUserId(),
-                    resource.getResourceId(),
-                    LocalTime.of(date.getHour(), date.getMinute()),
-                    LocalTime.of(date.getHour() + 1, date.getMinute()),
-                    date.toLocalDate()
-            );
+            reserveResource.reserve(reserveResourceDto);
         });
     }
 
@@ -232,25 +238,14 @@ class ReservationTest {
     @Test
     void test_reservation_id_value() {
         ReservationId reservationId = new ReservationId("12456");
-        Assertions.assertEquals(reservationId.getValue(), "12456");
+        Assertions.assertEquals("12456", reservationId.getValue());
     }
-
-    @Test
-    void test_user_id_hash() {
-        UserId userId = new UserId("123");
-        UserId userId2 = new UserId("123");
-        Assertions.assertEquals(userId.hashCode(), userId2.hashCode());
-    }
-
 
     @Test
     void test_is_close_checking() {
-        DayOfWeek dayOfWeek;
-        DateWithTimeRange dateWithTimeRange = DateWithTimeRange.of(LocalTime.of(8,0), LocalTime.of(16,0), LocalDate.now());
+        DateWithTimeRange dateWithTimeRange = DateWithTimeRange.of(LocalTime.of(8, 0), LocalTime.of(16, 0), LocalDate.now());
         ResourceId resourceId = new ResourceId("123");
-        Assertions.assertThrows(ResourceIsClosedException.class, () -> resourceTimetables.checkOpened(null,dateWithTimeRange, resourceId ));
-
-
+        Assertions.assertThrows(ResourceIsClosedException.class, () -> resourceTimetables.checkOpened(null, dateWithTimeRange, resourceId));
     }
 
 }

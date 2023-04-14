@@ -34,12 +34,12 @@ public class DateWithTimeRange {
         return this.date.equals(date);
     }
 
-    private boolean startTimeIsDuring(LocalTime startTime, LocalTime endTime) {
-        return this.startTime.isAfter(startTime) && this.startTime.isBefore(endTime);
+    private boolean startTimeIsDuring(LocalTime startTime) {
+        return startTime.isAfter(this.startTime) && startTime.isBefore(this.endTime);
     }
 
-    private boolean endTimeIsDuring(LocalTime startTime, LocalTime endTime) {
-        return this.endTime.isAfter(startTime) && this.endTime.isBefore(endTime);
+    private boolean endTimeIsDuring(LocalTime endTime) {
+        return endTime.isAfter(this.startTime) && endTime.isBefore(this.endTime);
     }
 
     private boolean startTimeIsBefore(LocalTime startTime) {
@@ -57,8 +57,8 @@ public class DateWithTimeRange {
     public boolean isOverLapping(DateWithTimeRange timeRange) {
         LocalTime startTimeToCompare = timeRange.getStartTime();
         LocalTime endTimeToCompare = timeRange.getEndTime();
-        return startTimeIsDuring(startTimeToCompare, endTimeToCompare)
-                || endTimeIsDuring(startTimeToCompare, endTimeToCompare)
+        return startTimeIsDuring(startTimeToCompare)
+                || endTimeIsDuring(endTimeToCompare)
                 || (startTimeIsBefore(startTimeToCompare) && endTimeIsAfter(endTimeToCompare))
                 || isSameTimeRange(timeRange);
     }
