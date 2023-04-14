@@ -1,8 +1,10 @@
 package infrastructure.repositories;
 
 
-import model.common.IdGenerator;
-import model.resource.*;
+import model.resource.Resource;
+import model.resource.ResourceId;
+import model.resource.ResourceNotFoundException;
+import model.resource.ResourceRepository;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,17 +12,8 @@ import java.util.stream.Collectors;
 
 public class InMemoryResourceRepository implements ResourceRepository {
     List<Resource> resources;
-    private final IdGenerator idGenerator;
-
-    public InMemoryResourceRepository(IdGenerator idGenerator) {
+    public InMemoryResourceRepository() {
         this.resources = new ArrayList<>();
-        this.idGenerator = idGenerator;
-    }
-
-    @Override
-    public Resource create(String institutionId, String name, List<String> equipments, ResourceTimetables resourceTimetables) {
-        ResourceId resourceId = new ResourceId(idGenerator.generate());
-        return Resource.of(resourceId, "1", "Salle de réunion de 10 personnes", new ArrayList<>(), resourceTimetables);
     }
 
     @Override

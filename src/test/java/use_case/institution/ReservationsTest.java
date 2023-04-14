@@ -2,19 +2,18 @@ package use_case.institution;
 
 import infrastructure.common.UUIDGenerator;
 import infrastructure.factories.ReservationFactory;
+import infrastructure.factories.ResourceFactory;
+import infrastructure.factories.UserFactory;
 import infrastructure.repositories.InMemoryReservationRepository;
 import infrastructure.repositories.InMemoryResourceRepository;
 import infrastructure.repositories.InMemoryUserRepository;
 import model.common.IdGenerator;
 import model.reservation.ConflictualReservationsException;
 import model.reservation.Reservation;
-import model.resource.Resource;
-import model.resource.ResourceIsClosedException;
-import model.resource.ResourceNotFoundException;
-import model.resource.ResourceTimetables;
-import model.resource.Timetable;
+import model.reservation.ReservationRepository;
+import model.resource.*;
 import model.user.User;
-import model.user.UserNotFoundException;
+import model.user.UserRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -30,22 +29,26 @@ import java.util.Map;
 
 class ReservationsTest {
     static ReserveResource reserveResource;
-    static InMemoryUserRepository inMemoryUserRepository;
-    static InMemoryReservationRepository inMemoryReservationRepository;
-    static InMemoryResourceRepository inMemoryResourceRepository;
+    static UserFactory userFactory;
+    static ResourceFactory resourceFactory;
+    static UserRepository userRepository;
+    static ReservationRepository reservationRepository;
+    static ResourceRepository resourceRepository;
 
     static ResourceTimetables resourceTimetables = null;
 
     @BeforeAll
     static void beforeAll() {
         IdGenerator idGenerator = new UUIDGenerator();
-        inMemoryUserRepository = new InMemoryUserRepository(idGenerator);
-        inMemoryReservationRepository = new InMemoryReservationRepository(idGenerator);
-        inMemoryResourceRepository = new InMemoryResourceRepository(idGenerator);
+        userFactory = new UserFactory(idGenerator);
+        resourceFactory = new ResourceFactory(idGenerator);
+
+        userRepository = new InMemoryUserRepository();
+        reservationRepository = new InMemoryReservationRepository();
+        resourceRepository = new InMemoryResourceRepository();
         reserveResource = new ReserveResource(
-                inMemoryUserRepository,
-                inMemoryReservationRepository,
-                inMemoryResourceRepository,
+                reservationRepository,
+                resourceRepository,
                 new ReservationFactory(idGenerator)
         );
 
@@ -78,11 +81,11 @@ class ReservationsTest {
     @Test
     void test_make_a_successful_reservation() {
         // Given
-        User user = inMemoryUserRepository.create("DOE", "John", "jdoe@gmail.com");
-        inMemoryUserRepository.save(user);
+        User user = userFactory.create("DOE", "John", "jdoe@gmail.com");
+        userRepository.save(user);
 
-        Resource resource = inMemoryResourceRepository.create("1", "Salle de réunion de 10 personnes", new ArrayList<>(), resourceTimetables);
-        inMemoryResourceRepository.add(resource);
+        Resource resource = resourceFactory.create("1", "Salle de réunion de 10 personnes", new ArrayList<>(), resourceTimetables);
+        resourceRepository.add(resource);
 
 
         final LocalDateTime date = LocalDateTime.now().plusWeeks(2).with(DayOfWeek.MONDAY).with(LocalTime.of(10, 0));
@@ -111,11 +114,11 @@ class ReservationsTest {
     @Test
     void test_make_a_reservation_on_closed_resource() {
         // Given
-        User user = inMemoryUserRepository.create("DOE", "John", "jdoe@gmail.com");
-        inMemoryUserRepository.save(user);
+        User user = userFactory.create("DOE", "John", "jdoe@gmail.com");
+        userRepository.save(user);
 
-        Resource resource = inMemoryResourceRepository.create("1", "Salle de réunion de 10 personnes", new ArrayList<>(), resourceTimetables);
-        inMemoryResourceRepository.add(resource);
+        Resource resource = resourceFactory.create("1", "Salle de réunion de 10 personnes", new ArrayList<>(), resourceTimetables);
+        resourceRepository.add(resource);
 
         final LocalDateTime date = LocalDateTime.now().plusWeeks(2).with(DayOfWeek.SUNDAY).with(LocalTime.of(10, 0));
         // When
@@ -131,13 +134,13 @@ class ReservationsTest {
     @Test
     void test_make_a_conflictual_reservation() {
         // Given
-        User user = inMemoryUserRepository.create("DOE", "John", "jdoe@gmail.com");
-        User user2 = inMemoryUserRepository.create("DUPONT", "Jean", "jdupont@example.com");
-        inMemoryUserRepository.save(user);
-        inMemoryUserRepository.save(user2);
+        User user = userFactory.create("DOE", "John", "jdoe@gmail.com");
+        User user2 = userFactory.create("DUPONT", "Jean", "jdupont@example.com");
+        userRepository.save(user);
+        userRepository.save(user2);
 
-        Resource resource = inMemoryResourceRepository.create("1", "Salle de réunion de 10 personnes", new ArrayList<>(), resourceTimetables);
-        inMemoryResourceRepository.add(resource);
+        Resource resource = resourceFactory.create("1", "Salle de réunion de 10 personnes", new ArrayList<>(), resourceTimetables);
+        resourceRepository.add(resource);
 
         final LocalDateTime date = LocalDateTime.now().plusWeeks(2).with(DayOfWeek.MONDAY).with(LocalTime.of(10, 0));
         try {
