@@ -13,6 +13,7 @@ import model.reservation.Reservation;
 import model.reservation.ReservationRepository;
 import model.resource.*;
 import model.user.User;
+import model.user.UserNotFoundException;
 import model.user.UserRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -100,7 +101,7 @@ class ReservationsTest {
                     LocalTime.of(date.getHour() + 1, date.getMinute()),
                     date.toLocalDate()
             );
-            resourceName = inMemoryResourceRepository.findById(reservation.getResourceId());
+            resourceName = resourceRepository.findById(reservation.getResourceId());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -171,10 +172,10 @@ class ReservationsTest {
     @Test
     void test_make_a_reservation_on_a_non_existing_resource() {
         // Given
-        User user = inMemoryUserRepository.create("DOE", "John", "jdoe@gmail.com");
-        inMemoryUserRepository.save(user);
+        User user = userFactory.create("DOE", "John", "jdoe@gmail.com");
+        userRepository.save(user);
 
-        Resource resource = inMemoryResourceRepository.create("1", "Salle de réunion de 10 personnes", new ArrayList<>(), resourceTimetables);
+        Resource resource = resourceFactory.create("1", "Salle de réunion de 10 personnes", new ArrayList<>(), resourceTimetables);
         final LocalDateTime date = LocalDateTime.now().plusWeeks(2).with(DayOfWeek.MONDAY).with(LocalTime.of(10, 0));
 
         // Then
@@ -193,10 +194,10 @@ class ReservationsTest {
     @Test
     void test_make_a_reservation_on_a_non_existing_user() {
         // Given
-        User user = inMemoryUserRepository.create("DOE", "John", "jdoe@gmail.com");
+        User user = userFactory.create("DOE", "John", "jdoe@gmail.com");
 
-        Resource resource = inMemoryResourceRepository.create("1", "Salle de réunion de 10 personnes", new ArrayList<>(), resourceTimetables);
-        inMemoryResourceRepository.add(resource);
+        Resource resource = resourceFactory.create("1", "Salle de réunion de 10 personnes", new ArrayList<>(), resourceTimetables);
+        resourceRepository.add(resource);
 
         final LocalDateTime date = LocalDateTime.now().plusWeeks(2).with(DayOfWeek.MONDAY).with(LocalTime.of(10, 0));
 
