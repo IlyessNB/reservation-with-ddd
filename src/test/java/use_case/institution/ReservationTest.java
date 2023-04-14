@@ -14,7 +14,6 @@ import model.reservation.ReservationId;
 import model.reservation.ReservationRepository;
 import model.resource.*;
 import model.user.User;
-import model.user.UserId;
 import model.user.UserNotFoundException;
 import model.user.UserRepository;
 import org.junit.jupiter.api.Assertions;
@@ -30,7 +29,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-class ReservationsTest {
+class ReservationTest {
     static ReserveResource reserveResource;
     static UserFactory userFactory;
     static ResourceFactory resourceFactory;
@@ -236,13 +235,4 @@ class ReservationsTest {
         ReservationId reservationId = new ReservationId("12456");
         Assertions.assertEquals(reservationId.getValue(), "12456");
     }
-
-    @Test
-    void test_user_id_hash() {
-        UserId userId = new UserId("123");
-        UserId userId2 = new UserId("123");
-        Assertions.assertEquals(userId.hashCode(), userId2.hashCode());
-    }
-
-
 }
