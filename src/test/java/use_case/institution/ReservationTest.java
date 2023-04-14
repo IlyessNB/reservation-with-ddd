@@ -8,10 +8,7 @@ import infrastructure.repositories.InMemoryReservationRepository;
 import infrastructure.repositories.InMemoryResourceRepository;
 import infrastructure.repositories.InMemoryUserRepository;
 import model.common.IdGenerator;
-import model.reservation.ConflictualReservationsException;
-import model.reservation.Reservation;
-import model.reservation.ReservationId;
-import model.reservation.ReservationRepository;
+import model.reservation.*;
 import model.resource.*;
 import model.user.User;
 import model.user.UserNotFoundException;
@@ -22,6 +19,7 @@ import org.junit.jupiter.api.Test;
 import use_case.reservations.ReserveResource;
 
 import java.time.DayOfWeek;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -235,4 +233,30 @@ class ReservationTest {
         ReservationId reservationId = new ReservationId("12456");
         Assertions.assertEquals(reservationId.getValue(), "12456");
     }
+
+    @Test
+    void test_user_id_hash() {
+        UserId userId = new UserId("123");
+        UserId userId2 = new UserId("123");
+        Assertions.assertEquals(userId.hashCode(), userId2.hashCode());
+    }
+
+    /***
+     *
+     23     private void checkClosedOnDay(List<Timetable> timeTableOfTheDay, ResourceId resourceId, DateWithTimeRange timeRange) throws ResourceIsClosedException {
+     24         if (timeTableOfTheDay == null || timeTableOfTheDay.isEmpty()) {
+     25             throw new ResourceIsClosedException(resourceId, timeRange);
+     26         }
+     */
+
+    @Test
+    void test_is_close_checking() {
+        DayOfWeek dayOfWeek;
+        DateWithTimeRange dateWithTimeRange = DateWithTimeRange.of(LocalTime.of(8,0), LocalTime.of(16,0), LocalDate.now());
+        ResourceId resourceId = new ResourceId("123");
+        Assertions.assertThrows(ResourceIsClosedException.class, () -> resourceTimetables.checkOpened(null,dateWithTimeRange, resourceId ));
+
+
+    }
+
 }
