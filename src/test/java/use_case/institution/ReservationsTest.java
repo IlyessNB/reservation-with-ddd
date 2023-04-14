@@ -10,6 +10,7 @@ import infrastructure.repositories.InMemoryUserRepository;
 import model.common.IdGenerator;
 import model.reservation.ConflictualReservationsException;
 import model.reservation.Reservation;
+import model.reservation.ReservationId;
 import model.reservation.ReservationRepository;
 import model.resource.*;
 import model.user.User;
@@ -50,7 +51,8 @@ class ReservationsTest {
         reserveResource = new ReserveResource(
                 reservationRepository,
                 resourceRepository,
-                new ReservationFactory(idGenerator)
+                new ReservationFactory(idGenerator),
+                userRepository
         );
 
         Map<DayOfWeek, List<Timetable>> horaires = new HashMap<>();
@@ -179,7 +181,7 @@ class ReservationsTest {
         final LocalDateTime date = LocalDateTime.now().plusWeeks(2).with(DayOfWeek.MONDAY).with(LocalTime.of(10, 0));
 
         // Then
-        Assertions.assertThrows(UserNotFoundException.class, () -> {
+        Assertions.assertThrows(ResourceNotFoundException.class, () -> {
             // When
             reserveResource.reserve(
                     user.getUserId(),
@@ -202,7 +204,7 @@ class ReservationsTest {
         final LocalDateTime date = LocalDateTime.now().plusWeeks(2).with(DayOfWeek.MONDAY).with(LocalTime.of(10, 0));
 
         // Then
-        Assertions.assertThrows(ResourceNotFoundException.class, () -> {
+        Assertions.assertThrows(UserNotFoundException.class, () -> {
             // When
             reserveResource.reserve(
                     user.getUserId(),
@@ -213,4 +215,27 @@ class ReservationsTest {
             );
         });
     }
+
+    @Test
+    void test_reservation_id_equality() {
+        ReservationId reservationId = new ReservationId("12456");
+        ReservationId reservationId2 = new ReservationId("12456");
+        Assertions.assertEquals(reservationId, reservationId2);
+    }
+
+    @Test
+    void test_reservation_id_hash() {
+        ReservationId reservationId = new ReservationId("12456");
+        ReservationId reservationId2 = new ReservationId("12456");
+        Assertions.assertEquals(reservationId.hashCode(), reservationId2.hashCode());
+    }
+
+    @Test
+    void test_reservation_id_value() {
+        ReservationId reservationId = new ReservationId("12456");
+        Assertions.assertEquals(reservationId.getValue(), "12456");
+    }
+
+
+
 }
