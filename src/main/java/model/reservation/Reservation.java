@@ -18,7 +18,7 @@ public class Reservation {
         this.resourceId = resourceId;
     }
 
-    public static Reservation of(ReservationId reservationId, UserId userId, ResourceId resourceId, DateWithTimeRange timeRange) {
+    public static Reservation of(ReservationId reservationId, UserId userId, ResourceId resourceId, DateWithTimeRange timeRange) throws ReservationIncoherentTimeRangeException, ReservationDateIsInPastException {
         timeRange.checkTimeCoherence();
         timeRange.checkIsNotInPast();
         return new Reservation(reservationId, userId, timeRange, resourceId);

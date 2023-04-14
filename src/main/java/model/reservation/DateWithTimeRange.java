@@ -43,11 +43,11 @@ public class DateWithTimeRange {
     }
 
     private boolean startTimeIsBefore(LocalTime startTime) {
-        return this.startTime.isBefore(startTime);
+        return startTime.isBefore(this.startTime);
     }
 
     private boolean endTimeIsAfter(LocalTime endTime) {
-        return this.endTime.isAfter(endTime);
+        return endTime.isAfter(this.endTime);
     }
 
     private boolean isSameTimeRange(DateWithTimeRange timeRange) {
@@ -63,15 +63,15 @@ public class DateWithTimeRange {
                 || isSameTimeRange(timeRange);
     }
 
-    public void checkTimeCoherence() {
-        if (!startTime.isBefore(endTime)) {
-            throw new IllegalArgumentException("La reservation n'est pas valide car la date de fin est avant la date de début");
+    public void checkTimeCoherence() throws ReservationIncoherentTimeRangeException {
+        if (!startTime.isBefore(endTime) || startTime.equals(endTime)) {
+            throw new ReservationIncoherentTimeRangeException(startTime, endTime);
         }
     }
 
-    public void checkIsNotInPast() {
+    public void checkIsNotInPast() throws ReservationDateIsInPastException {
         if (date.isBefore(LocalDate.now())) {
-            throw new IllegalArgumentException("La reservation ne peut pas être dans le passé");
+            throw new ReservationDateIsInPastException(date);
         }
     }
 }

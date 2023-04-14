@@ -1,10 +1,7 @@
 package use_case.reservations;
 
 import infrastructure.factories.ReservationFactory;
-import model.reservation.ConflictualReservationsException;
-import model.reservation.DateWithTimeRange;
-import model.reservation.Reservation;
-import model.reservation.ReservationRepository;
+import model.reservation.*;
 import model.resource.*;
 import model.user.UserId;
 import model.user.UserNotFoundException;
@@ -27,7 +24,7 @@ public class ReserveResource {
         this.reservationFactory = reservationFactory;
     }
 
-    public Reservation reserve(UserId userId, ResourceId resourceId, LocalTime startTime, LocalTime endTime, LocalDate date) throws ResourceNotFoundException, ResourceIsClosedException, ConflictualReservationsException, UserNotFoundException {
+    public Reservation reserve(UserId userId, ResourceId resourceId, LocalTime startTime, LocalTime endTime, LocalDate date) throws ResourceNotFoundException, ResourceIsClosedException, ConflictualReservationsException, UserNotFoundException, ReservationIncoherentTimeRangeException, ReservationDateIsInPastException {
         userRepository.exists(userId);
 
         DateWithTimeRange timeRange = DateWithTimeRange.of(startTime, endTime, date);
