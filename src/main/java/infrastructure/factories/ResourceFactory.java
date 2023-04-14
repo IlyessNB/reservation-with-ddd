@@ -5,8 +5,6 @@ import model.resource.Resource;
 import model.resource.ResourceId;
 import model.resource.ResourceTimetables;
 
-import java.util.List;
-
 public class ResourceFactory {
     private final IdGenerator idGenerator;
 
@@ -15,8 +13,8 @@ public class ResourceFactory {
     }
 
 
-    public Resource create(String institutionId, String name, List<String> equipments, ResourceTimetables resourceTimetables) {
+    public Resource create(String name, ResourceTimetables resourceTimetables) {
         ResourceId resourceId = new ResourceId(idGenerator.generate());
-        return Resource.of(resourceId, institutionId, name, equipments, resourceTimetables);
+        return Resource.of(resourceId, name, resourceTimetables);
     }
 }

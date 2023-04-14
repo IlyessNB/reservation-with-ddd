@@ -86,7 +86,7 @@ class ReservationTest {
         User user = userFactory.create("DOE", "John", "jdoe@gmail.com");
         userRepository.save(user);
 
-        Resource resource = resourceFactory.create("1", "Salle de réunion de 10 personnes", new ArrayList<>(), resourceTimetables);
+        Resource resource = resourceFactory.create("Salle de réunion de 10 personnes", resourceTimetables);
         resourceRepository.save(resource);
 
 
@@ -121,7 +121,7 @@ class ReservationTest {
         User user = userFactory.create("DOE", "John", "jdoe@gmail.com");
         userRepository.save(user);
 
-        Resource resource = resourceFactory.create("1", "Salle de réunion de 10 personnes", new ArrayList<>(), resourceTimetables);
+        Resource resource = resourceFactory.create("Salle de réunion de 10 personnes", resourceTimetables);
         resourceRepository.save(resource);
 
         final LocalDateTime date = LocalDateTime.now().plusWeeks(2).with(DayOfWeek.SUNDAY).with(LocalTime.of(10, 0));
@@ -144,7 +144,7 @@ class ReservationTest {
         userRepository.save(user);
         userRepository.save(user2);
 
-        Resource resource = resourceFactory.create("1", "Salle de réunion de 10 personnes", new ArrayList<>(), resourceTimetables);
+        Resource resource = resourceFactory.create("Salle de réunion de 10personnes", resourceTimetables);
         resourceRepository.save(resource);
 
         final LocalDateTime date = LocalDateTime.now().plusWeeks(2).with(DayOfWeek.MONDAY).with(LocalTime.of(10, 0));
@@ -202,7 +202,7 @@ class ReservationTest {
         // Given
         User user = userFactory.create("DOE", "John", "jdoe@gmail.com");
 
-        Resource resource = resourceFactory.create("1", "Salle de réunion de 10 personnes", new ArrayList<>(), resourceTimetables);
+        Resource resource = resourceFactory.create("Salle de réunion de 10 personnes", resourceTimetables);
         resourceRepository.save(resource);
 
         final LocalDateTime date = LocalDateTime.now().plusWeeks(2).with(DayOfWeek.MONDAY).with(LocalTime.of(10, 0));

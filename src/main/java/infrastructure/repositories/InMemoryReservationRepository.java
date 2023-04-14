@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class InMemoryReservationRepository implements ReservationRepository {
-    List<Reservation> reservations;
+    private final List<Reservation> reservations;
 
     public InMemoryReservationRepository() {
         this.reservations = new ArrayList<>();

@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class InMemoryResourceRepository implements ResourceRepository {
-    List<Resource> resources;
+    private final List<Resource> resources;
     public InMemoryResourceRepository() {
         this.resources = new ArrayList<>();
     }

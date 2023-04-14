@@ -12,10 +12,10 @@ import model.user.UserRepository;
 import java.util.List;
 
 public class ReserveResource {
-    UserRepository userRepository;
-    ReservationRepository reservationRepository;
-    ResourceRepository resourceRepository;
-    ReservationFactory reservationFactory;
+    private final UserRepository userRepository;
+    private final ReservationRepository reservationRepository;
+    private final ResourceRepository resourceRepository;
+    private final ReservationFactory reservationFactory;
 
     public ReserveResource(UserRepository userRepository, ReservationRepository reservationRepository, ResourceRepository resourceRepository, ReservationFactory reservationFactory) {
         this.userRepository = userRepository;

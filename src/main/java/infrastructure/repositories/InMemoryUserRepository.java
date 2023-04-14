@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class InMemoryUserRepository implements UserRepository {
-    List<User> users;
+    private final List<User> users;
 
     public InMemoryUserRepository() {
         users = new ArrayList<>();

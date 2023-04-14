@@ -7,11 +7,11 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 
 public class ReserveResourceDto {
-    UserId userId;
-    ResourceId resourceId;
-    LocalTime startTime;
-    LocalTime endTime;
-    LocalDate date;
+    final UserId userId;
+    final ResourceId resourceId;
+    final LocalTime startTime;
+    final LocalTime endTime;
+    final LocalDate date;
 
     public ReserveResourceDto(UserId userId, ResourceId resourceId, LocalTime startTime, LocalTime endTime, LocalDate date) {
         this.userId = userId;
