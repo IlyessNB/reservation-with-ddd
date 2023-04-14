@@ -1,6 +1,5 @@
 package infrastructure.repositories;
 
-import model.common.IdGenerator;
 import model.user.User;
 import model.user.UserId;
 import model.user.UserNotFoundException;
@@ -13,18 +12,8 @@ import java.util.stream.Collectors;
 public class InMemoryUserRepository implements UserRepository {
     List<User> users;
 
-
-    private final IdGenerator idGenerator;
-
-    public InMemoryUserRepository(IdGenerator idGenerator) {
+    public InMemoryUserRepository() {
         users = new ArrayList<>();
-        this.idGenerator = idGenerator;
-    }
-
-    @Override
-    public User create(String lastName, String firstName, String email) {
-        UserId userId = new UserId(idGenerator.generate());
-        return User.of(userId, lastName, firstName, email);
     }
 
     @Override
