@@ -22,12 +22,12 @@ public class InMemoryReservationRepository implements ReservationRepository {
     }
 
     @Override
-    public List<Reservation> findByTimeRange(ResourceId resourceId, DateWithTimeRange timeRange) {
+    public List<Reservation> findByDateWithTimeRange(ResourceId resourceId, DateWithTimeRange timeRange) {
         return reservations
                 .stream()
                 .filter(reservation -> reservation.getResourceId().equals(resourceId))
-                .filter(reservation -> timeRange.isSameDate(reservation.getTimeRange().getDate()))
-                .filter(reservation -> timeRange.isOverLapping(reservation.getTimeRange()))
+                .filter(reservation -> timeRange.isSameDate(reservation.getDateWithTimeRange().getDate()))
+                .filter(reservation -> timeRange.isOverLapping(reservation.getDateWithTimeRange()))
                 .collect(Collectors.toList());
     }
 }
