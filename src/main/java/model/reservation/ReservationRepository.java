@@ -12,5 +12,5 @@ public interface ReservationRepository {
 
     void save(Reservation reservation);
 
-    List<Reservation> findByTimeRange(ResourceId resourceId, TimeRange timeRange);
+    List<Reservation> findByTimeRange(ResourceId resourceId, DateWithTimeRange timeRange);
 }

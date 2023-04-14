@@ -8,17 +8,17 @@ import java.util.List;
 public class Reservation {
     private final ReservationId reservationId;
     private final UserId userId;
-    private final TimeRange timeRange;
+    private final DateWithTimeRange timeRange;
     private final ResourceId resourceId;
 
-    private Reservation(ReservationId reservationId, UserId userId, TimeRange timeRange, ResourceId resourceId) {
+    private Reservation(ReservationId reservationId, UserId userId, DateWithTimeRange timeRange, ResourceId resourceId) {
         this.reservationId = reservationId;
         this.userId = userId;
         this.timeRange = timeRange;
         this.resourceId = resourceId;
     }
 
-    public static Reservation of(ReservationId reservationId, UserId userId, ResourceId resourceId, TimeRange timeRange) {
+    public static Reservation of(ReservationId reservationId, UserId userId, ResourceId resourceId, DateWithTimeRange timeRange) {
         timeRange.checkTimeCoherence();
         timeRange.checkIsNotInPast();
         return new Reservation(reservationId, userId, timeRange, resourceId);
@@ -28,7 +28,7 @@ public class Reservation {
         return resourceId;
     }
 
-    public TimeRange getTimeRange() {
+    public DateWithTimeRange getTimeRange() {
         return timeRange;
     }
 

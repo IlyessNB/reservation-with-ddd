@@ -3,19 +3,19 @@ package model.reservation;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
-public class TimeRange {
+public class DateWithTimeRange {
     private final LocalTime startTime;
     private final LocalTime endTime;
     private final LocalDate date;
 
-    private TimeRange(LocalTime startTime, LocalTime endTime, LocalDate date) {
+    private DateWithTimeRange(LocalTime startTime, LocalTime endTime, LocalDate date) {
         this.startTime = startTime;
         this.endTime = endTime;
         this.date = date;
     }
 
-    public static TimeRange of(LocalTime startTime, LocalTime endTime, LocalDate date) {
-        return new TimeRange(startTime, endTime, date);
+    public static DateWithTimeRange of(LocalTime startTime, LocalTime endTime, LocalDate date) {
+        return new DateWithTimeRange(startTime, endTime, date);
     }
 
     public LocalDate getDate() {
@@ -50,11 +50,11 @@ public class TimeRange {
         return this.endTime.isAfter(endTime);
     }
 
-    private boolean isSameTimeRange(TimeRange timeRange) {
+    private boolean isSameTimeRange(DateWithTimeRange timeRange) {
         return this.startTime.equals(timeRange.getStartTime()) && this.endTime.equals(timeRange.getEndTime());
     }
 
-    public boolean isOverLapping(TimeRange timeRange) {
+    public boolean isOverLapping(DateWithTimeRange timeRange) {
         LocalTime startTimeToCompare = timeRange.getStartTime();
         LocalTime endTimeToCompare = timeRange.getEndTime();
         return startTimeIsDuring(startTimeToCompare, endTimeToCompare)

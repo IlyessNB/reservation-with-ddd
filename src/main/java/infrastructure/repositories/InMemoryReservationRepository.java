@@ -1,10 +1,10 @@
 package infrastructure.repositories;
 
 import model.common.IdGenerator;
+import model.reservation.DateWithTimeRange;
 import model.reservation.Reservation;
 import model.reservation.ReservationId;
 import model.reservation.ReservationRepository;
-import model.reservation.TimeRange;
 import model.resource.ResourceId;
 import model.user.UserId;
 
@@ -26,7 +26,7 @@ public class InMemoryReservationRepository implements ReservationRepository {
     @Override
     public Reservation create(UserId userId, ResourceId resourceId, LocalTime startTime, LocalTime endTime, LocalDate date) {
         ReservationId reservationId = new ReservationId(idGenerator.generate());
-        return Reservation.of(reservationId, userId, resourceId, TimeRange.of(startTime, endTime, date));
+        return Reservation.of(reservationId, userId, resourceId, DateWithTimeRange.of(startTime, endTime, date));
     }
 
     @Override
@@ -35,7 +35,7 @@ public class InMemoryReservationRepository implements ReservationRepository {
     }
 
     @Override
-    public List<Reservation> findByTimeRange(ResourceId resourceId, TimeRange timeRange) {
+    public List<Reservation> findByTimeRange(ResourceId resourceId, DateWithTimeRange timeRange) {
         return reservations
                 .stream()
                 .filter(reservation -> reservation.getResourceId().equals(resourceId))

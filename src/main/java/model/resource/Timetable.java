@@ -3,20 +3,19 @@ package model.resource;
 import java.time.LocalTime;
 
 public class Timetable {
-    private final LocalTime heureOuverture;
-    private final LocalTime heureFermeture;
+    private final LocalTime openingTime;
+    private final LocalTime closingTime;
 
-
-    public Timetable(LocalTime heureOuverture, LocalTime heureFermeture) {
-        this.heureOuverture = heureOuverture;
-        this.heureFermeture = heureFermeture;
+    public Timetable(LocalTime openingTime, LocalTime closingTime) {
+        this.openingTime = openingTime;
+        this.closingTime = closingTime;
     }
 
     public LocalTime getOpeningTime() {
-        return heureOuverture;
+        return openingTime;
     }
 
     public LocalTime getClosingTime() {
-        return heureFermeture;
+        return closingTime;
     }
 }

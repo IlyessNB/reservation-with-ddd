@@ -4,10 +4,8 @@ package infrastructure.repositories;
 import model.common.IdGenerator;
 import model.resource.*;
 
-import java.time.DayOfWeek;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 public class InMemoryResourceRepository implements ResourceRepository {
@@ -20,9 +18,9 @@ public class InMemoryResourceRepository implements ResourceRepository {
     }
 
     @Override
-    public Resource create(String institutionId, String name, List<String> equipments, Map<DayOfWeek, List<Timetable>> timetablesByDayOfWeek) {
+    public Resource create(String institutionId, String name, List<String> equipments, ResourceTimetables resourceTimetables) {
         ResourceId resourceId = new ResourceId(idGenerator.generate());
-        return Resource.of(resourceId, "1", "Salle de réunion de 10 personnes", new ArrayList<>(), timetablesByDayOfWeek);
+        return Resource.of(resourceId, "1", "Salle de réunion de 10 personnes", new ArrayList<>(), resourceTimetables);
     }
 
     @Override

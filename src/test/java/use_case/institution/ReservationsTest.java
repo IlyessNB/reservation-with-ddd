@@ -10,6 +10,7 @@ import model.reservation.ConflictualReservationsException;
 import model.reservation.Reservation;
 import model.resource.Resource;
 import model.resource.ResourceIsClosedException;
+import model.resource.ResourceTimetables;
 import model.resource.Timetable;
 import model.user.User;
 import org.junit.jupiter.api.Assertions;
@@ -31,7 +32,7 @@ class ReservationsTest {
     static InMemoryReservationRepository inMemoryReservationRepository;
     static InMemoryResourceRepository inMemoryResourceRepository;
 
-    static Map<DayOfWeek, List<Timetable>> horaires = new HashMap<>();
+    static ResourceTimetables resourceTimetables = null;
 
     @BeforeAll
     static void beforeAll() {
@@ -45,6 +46,8 @@ class ReservationsTest {
                 inMemoryResourceRepository,
                 new ReservationFactory(idGenerator)
         );
+
+        Map<DayOfWeek, List<Timetable>> horaires = new HashMap<>();
         horaires.put(DayOfWeek.MONDAY, new ArrayList<>() {{
             add(new Timetable(LocalTime.of(8, 0), LocalTime.of(20, 0)));
         }});
@@ -66,6 +69,8 @@ class ReservationsTest {
         horaires.put(DayOfWeek.SUNDAY, new ArrayList<>() {{
             add(null);
         }});
+
+        resourceTimetables = new ResourceTimetables(horaires);
     }
 
     @Test
@@ -74,7 +79,7 @@ class ReservationsTest {
         User user = inMemoryUserRepository.create("DOE", "John", "jdoe@gmail.com");
         inMemoryUserRepository.save(user);
 
-        Resource resource = inMemoryResourceRepository.create("1", "Salle de réunion de 10 personnes", new ArrayList<>(), horaires);
+        Resource resource = inMemoryResourceRepository.create("1", "Salle de réunion de 10 personnes", new ArrayList<>(), resourceTimetables);
         inMemoryResourceRepository.add(resource);
 
         final LocalDateTime date = LocalDateTime.now().plusWeeks(2).with(DayOfWeek.MONDAY).with(LocalTime.of(10, 0));
@@ -103,20 +108,18 @@ class ReservationsTest {
         User user = inMemoryUserRepository.create("DOE", "John", "jdoe@gmail.com");
         inMemoryUserRepository.save(user);
 
-        Resource resource = inMemoryResourceRepository.create("1", "Salle de réunion de 10 personnes", new ArrayList<>(), horaires);
+        Resource resource = inMemoryResourceRepository.create("1", "Salle de réunion de 10 personnes", new ArrayList<>(), resourceTimetables);
         inMemoryResourceRepository.add(resource);
 
         final LocalDateTime date = LocalDateTime.now().plusWeeks(2).with(DayOfWeek.SUNDAY).with(LocalTime.of(10, 0));
         // When
-        Assertions.assertThrows(ResourceIsClosedException.class, () -> {
-            reserveResource.reserve(
-                    user.getUserId(),
-                    resource.getResourceId(),
-                    LocalTime.of(date.getHour(), date.getMinute()),
-                    LocalTime.of(date.getHour() + 1, date.getMinute()),
-                    date.toLocalDate()
-            );
-        });
+        Assertions.assertThrows(ResourceIsClosedException.class, () -> reserveResource.reserve(
+                user.getUserId(),
+                resource.getResourceId(),
+                LocalTime.of(date.getHour(), date.getMinute()),
+                LocalTime.of(date.getHour() + 1, date.getMinute()),
+                date.toLocalDate()
+        ));
     }
 
     @Test
@@ -127,7 +130,7 @@ class ReservationsTest {
         inMemoryUserRepository.save(user);
         inMemoryUserRepository.save(user2);
 
-        Resource resource = inMemoryResourceRepository.create("1", "Salle de réunion de 10 personnes", new ArrayList<>(), horaires);
+        Resource resource = inMemoryResourceRepository.create("1", "Salle de réunion de 10 personnes", new ArrayList<>(), resourceTimetables);
         inMemoryResourceRepository.add(resource);
 
         final LocalDateTime date = LocalDateTime.now().plusWeeks(2).with(DayOfWeek.MONDAY).with(LocalTime.of(10, 0));

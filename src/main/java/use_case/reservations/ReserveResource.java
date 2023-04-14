@@ -2,9 +2,9 @@ package use_case.reservations;
 
 import infrastructure.factories.ReservationFactory;
 import model.reservation.ConflictualReservationsException;
+import model.reservation.DateWithTimeRange;
 import model.reservation.Reservation;
 import model.reservation.ReservationRepository;
-import model.reservation.TimeRange;
 import model.resource.*;
 import model.user.UserId;
 import model.user.UserRepository;
@@ -27,7 +27,7 @@ public class ReserveResource {
     }
 
     public Reservation reserve(UserId userId, ResourceId resourceId, LocalTime startTime, LocalTime endTime, LocalDate date) throws ResourceNotFoundException, ResourceIsClosedException, ConflictualReservationsException {
-        TimeRange timeRange = TimeRange.of(startTime, endTime, date);
+        DateWithTimeRange timeRange = DateWithTimeRange.of(startTime, endTime, date);
         final Reservation reservation = reservationFactory.create(userId, resourceId, timeRange);
         final Resource resource = resourceRepository.findById(resourceId);
         final List<Reservation> reservationsInTimeRange = reservationRepository.findByTimeRange(resourceId, reservation.getTimeRange());
