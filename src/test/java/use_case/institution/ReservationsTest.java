@@ -10,9 +10,11 @@ import model.reservation.ConflictualReservationsException;
 import model.reservation.Reservation;
 import model.resource.Resource;
 import model.resource.ResourceIsClosedException;
+import model.resource.ResourceNotFoundException;
 import model.resource.ResourceTimetables;
 import model.resource.Timetable;
 import model.user.User;
+import model.user.UserNotFoundException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -82,9 +84,11 @@ class ReservationsTest {
         Resource resource = inMemoryResourceRepository.create("1", "Salle de réunion de 10 personnes", new ArrayList<>(), resourceTimetables);
         inMemoryResourceRepository.add(resource);
 
+
         final LocalDateTime date = LocalDateTime.now().plusWeeks(2).with(DayOfWeek.MONDAY).with(LocalTime.of(10, 0));
         // When
         Reservation reservation = null;
+        Resource resourceName = null;
         try {
             reservation = reserveResource.reserve(
                     user.getUserId(),
@@ -93,6 +97,7 @@ class ReservationsTest {
                     LocalTime.of(date.getHour() + 1, date.getMinute()),
                     date.toLocalDate()
             );
+            resourceName = inMemoryResourceRepository.findById(reservation.getResourceId());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -100,6 +105,7 @@ class ReservationsTest {
         // Then
         Assertions.assertNotNull(reservation);
         Assertions.assertEquals(reservation.getResourceId(), resource.getResourceId());
+        Assertions.assertEquals(resourceName.getName(), "Salle de réunion de 10 personnes");
     }
 
     @Test
@@ -148,12 +154,57 @@ class ReservationsTest {
 
         // Then
         Assertions.assertThrows(ConflictualReservationsException.class, () -> {
-        // When
+            // When
             reserveResource.reserve(
                     user.getUserId(),
                     resource.getResourceId(),
                     LocalTime.of(date.getHour() - 1, date.getMinute()),
                     LocalTime.of(date.getHour(), date.getMinute() + 30),
+                    date.toLocalDate()
+            );
+        });
+    }
+
+    @Test
+    void test_make_a_reservation_on_a_non_existing_resource() {
+        // Given
+        User user = inMemoryUserRepository.create("DOE", "John", "jdoe@gmail.com");
+        inMemoryUserRepository.save(user);
+
+        Resource resource = inMemoryResourceRepository.create("1", "Salle de réunion de 10 personnes", new ArrayList<>(), resourceTimetables);
+        final LocalDateTime date = LocalDateTime.now().plusWeeks(2).with(DayOfWeek.MONDAY).with(LocalTime.of(10, 0));
+
+        // Then
+        Assertions.assertThrows(UserNotFoundException.class, () -> {
+            // When
+            reserveResource.reserve(
+                    user.getUserId(),
+                    resource.getResourceId(),
+                    LocalTime.of(date.getHour(), date.getMinute()),
+                    LocalTime.of(date.getHour() + 1, date.getMinute()),
+                    date.toLocalDate()
+            );
+        });
+    }
+
+    @Test
+    void test_make_a_reservation_on_a_non_existing_user() {
+        // Given
+        User user = inMemoryUserRepository.create("DOE", "John", "jdoe@gmail.com");
+
+        Resource resource = inMemoryResourceRepository.create("1", "Salle de réunion de 10 personnes", new ArrayList<>(), resourceTimetables);
+        inMemoryResourceRepository.add(resource);
+
+        final LocalDateTime date = LocalDateTime.now().plusWeeks(2).with(DayOfWeek.MONDAY).with(LocalTime.of(10, 0));
+
+        // Then
+        Assertions.assertThrows(ResourceNotFoundException.class, () -> {
+            // When
+            reserveResource.reserve(
+                    user.getUserId(),
+                    resource.getResourceId(),
+                    LocalTime.of(date.getHour(), date.getMinute()),
+                    LocalTime.of(date.getHour() + 1, date.getMinute()),
                     date.toLocalDate()
             );
         });
