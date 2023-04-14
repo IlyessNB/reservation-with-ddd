@@ -22,7 +22,7 @@ public class InMemoryReservationRepository implements ReservationRepository {
     }
 
     @Override
-    public List<Reservation> findByTimeRange(ResourceId resourceId, DateWithTimeRange timeRange) {
+    public List<Reservation> findByDateWithTimeRange(ResourceId resourceId, DateWithTimeRange timeRange) {
         return reservations
                 .stream()
                 .filter(reservation -> reservation.getResourceId().equals(resourceId))

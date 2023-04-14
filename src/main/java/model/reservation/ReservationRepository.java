@@ -7,5 +7,5 @@ import java.util.List;
 public interface ReservationRepository {
     void save(Reservation reservation);
 
-    List<Reservation> findByTimeRange(ResourceId resourceId, DateWithTimeRange timeRange);
+    List<Reservation> findByDateWithTimeRange(ResourceId resourceId, DateWithTimeRange timeRange);
 }

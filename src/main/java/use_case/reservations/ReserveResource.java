@@ -33,7 +33,7 @@ public class ReserveResource {
         DateWithTimeRange timeRange = DateWithTimeRange.of(startTime, endTime, date);
         final Resource resource = resourceRepository.findById(resourceId);
         final Reservation reservation = reservationFactory.create(userId, resourceId, timeRange);
-        final List<Reservation> reservationsInTimeRange = reservationRepository.findByTimeRange(resourceId, reservation.getDateWithTimeRange());
+        final List<Reservation> reservationsInTimeRange = reservationRepository.findByDateWithTimeRange(resourceId, reservation.getDateWithTimeRange());
 
         resource.verifyIsOpen(reservation.getDateWithTimeRange());
         reservation.verifyConflicts(reservationsInTimeRange);
