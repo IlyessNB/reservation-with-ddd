@@ -14,6 +14,7 @@ import model.reservation.ReservationId;
 import model.reservation.ReservationRepository;
 import model.resource.*;
 import model.user.User;
+import model.user.UserId;
 import model.user.UserNotFoundException;
 import model.user.UserRepository;
 import org.junit.jupiter.api.Assertions;
@@ -52,8 +53,7 @@ class ReservationsTest {
                 userRepository,
                 reservationRepository,
                 resourceRepository,
-                new ReservationFactory(idGenerator),
-                userRepository
+                new ReservationFactory(idGenerator)
         );
 
         Map<DayOfWeek, List<Timetable>> horaires = new HashMap<>();
@@ -237,6 +237,12 @@ class ReservationsTest {
         Assertions.assertEquals(reservationId.getValue(), "12456");
     }
 
+    @Test
+    void test_user_id_hash() {
+        UserId userId = new UserId("123");
+        UserId userId2 = new UserId("123");
+        Assertions.assertEquals(userId.hashCode(), userId2.hashCode());
+    }
 
 
 }
